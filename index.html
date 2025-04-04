@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Food</title>
+    <link rel="icon" type="image/x-icon" href="/img/Logo.png">
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/img/Logo.png" width="130" height="130">
+        </div>
+        <button class="menu-toggle" onclick="toggleMenu()">&#9776;</button>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="about us.html">About us</a></li>
+            <li><a href="donar dashboard.html">Donate</a></li>
+            <li><a href="contactus.html">Contact us</a></li>
+            <div class="buttons"> 
+                <button class="btn" onclick="window.location.href='/register page.html'">Register</button>
+                <button class="btn" onclick="window.location.href='/login.html'">Login</button>
+            </div>
+           
+        </ul>
+    </nav>
+    
+    <section class="hero">
+        <h1>Welcome to Our Website</h1>
+        <p>Your gateway to awesome content</p>
+        <div class="buttons">
+            <button class="btn">Learn More</button>
+            <button class="btn">Sign Up</button>
+        </div>
+        <div class="video-container">
+            <video controls>
+                <source src="video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </section>
+
+    <script>
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

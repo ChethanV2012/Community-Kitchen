@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us | Community Kitchen</title>
+  <link rel="stylesheet" href="contactus.css" />
+</head>
+<body>
+  <!-- Header with Navigation -->
+  <header>
+    <div>
+      <a href="index.html"><strong>Community Kitchen</strong></a>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="donar.html">Donate</a>
+      <a href="contactus.html">Contact Us</a>
+    </nav>
+    <a href="donate.html" class="cta-btn">Donate Now</a>
+  </header>
+
+  <!-- Contact Section -->
+  <div class="contact-section">
+    <div class="contact-container">
+      <!-- Left Text Section -->
+      <div class="contact-text">
+        <h2>Contact Us</h2>
+        <p>Need to get in touch? Fill out the form, or contact us via email or phone below.</p>
+        <p><strong>Email:</strong> support@communitykitchen.org</p>
+        <p><strong>Phone:</strong> +91 98765 43210</p>
+        <p><strong>Address:</strong> 123, Community Street, Bangalore, India</p>
+      </div>
+
+      <!-- Right Form Section -->
+      <div class="contact-form">
+        <form id="contactForm">
+          <input type="text" id="firstName" name="firstName" placeholder="First Name*" required>
+          <input type="text" id="lastName" name="lastName" placeholder="Last Name*" required>
+          <input type="email" id="email" name="email" placeholder="Email*" required>
+          <textarea id="message" name="message" placeholder="What can we help you with?" rows="4" required></textarea>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript for Form Handling -->
+  <script>
+    document.getElementById("contactForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      alert("Thank you! Your message has been sent.");
+      document.getElementById("contactForm").reset();
+    });
+  </script>
+</body>
+</html>

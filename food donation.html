@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Donate Food</title>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    .form-box {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 400px;
+    }
+    input, select, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    input, select {
+      background-color: #333;
+      color: white;
+    }
+    button {
+      background-color: #ffc107;
+      color: black;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Donate Food to a Community Kitchen</h1>
+  <div class="form-box">
+    <form id="donation-form">
+      <input type="text" id="first-name" placeholder="Your Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="tel" id="phone" placeholder="Phone Number" required />
+      
+      <select id="category" required>
+        <option value="">Select Category</option>
+        <option value="Vegetables">Vegetables</option>
+        <option value="Cooked Meals">Cooked Meals</option>
+        <option value="Bakery">Bakery</option>
+        <option value="Fruits">Fruits</option>
+      </select>
+      
+      <input type="text" id="quantity" placeholder="Quantity (e.g., 10kg, 5 packs)" required />
+      <select id="kitchen" required>
+        <option value="">Choose Community Kitchen</option>
+        <option value="Sunrise Community Kitchen">Sunrise Community Kitchen</option>
+        <option value="Hope Food Shelter">Hope Food Shelter</option>
+        <option value="Helping Hands Kitchen">Helping Hands Kitchen</option>
+      </select>
+
+      <button type="submit">Submit Donation</button>
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBCD7a7qFfkNJLWWKpAXl4T3zSvDxkJF7s",
+      authDomain: "fooddonationsystem-e1589.firebaseapp.com",
+      projectId: "fooddonationsystem-e1589",
+      storageBucket: "fooddonationsystem-e1589.appspot.com",
+      messagingSenderId: "1048516795695",
+      appId: "1:1048516795695:web:61625a789112fb55c995da"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const donationForm = document.getElementById('donation-form');
+
+    donationForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const donationData = {
+        firstName: document.getElementById('first-name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        category: document.getElementById('category').value,
+        quantity: document.getElementById('quantity').value,
+        kitchenName: document.getElementById('kitchen').value,
+        status: "available",
+        timestamp: new Date()
+      };
+
+      try {
+        await addDoc(collection(db, "donations"), donationData);
+        alert("Donation submitted successfully!");
+        donationForm.reset();
+      } catch (error) {
+        console.error("Error adding document:", error);
+        alert("Submission failed. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>

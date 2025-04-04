@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Donor Dashboard</title>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: white;
+      text-align: center;
+    }
+
+    .tab-buttons {
+      margin: 20px;
+    }
+
+    .tab-buttons button {
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      background: #ffc107;
+      border: none;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: #1e1e1e;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    table.active {
+      display: table;
+      opacity: 1;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #444;
+      text-align: center;
+    }
+
+    th {
+      background: #ffc107;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Donor Dashboard</h1>
+
+  <div class="tab-buttons">
+    <button onclick="showTable('foodTable')">🍲 Food Donations</button>
+    <button onclick="showTable('fundTable')">💰 Funds Donated</button>
+  </div>
+
+  <table id="foodTable">
+    <thead>
+      <tr>
+        <th>Donor Name</th>
+        <th>Category</th> <!-- Updated Header -->
+        <th>Quantity</th>
+        <th>Pickup Location</th>
+      </tr>
+    </thead>
+    <tbody id="donationsTable"></tbody>
+  </table>
+
+  <table id="fundTable">
+    <thead>
+      <tr>
+        <th>Donor Name</th>
+        <th>Amount (₹)</th>
+      </tr>
+    </thead>
+    <tbody id="fundsTable"></tbody>
+  </table>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBCD7a7qFfkNJLWWKpAXl4T3zSvDxkJF7s",
+      authDomain: "fooddonationsystem-e1589.firebaseapp.com",
+      projectId: "fooddonationsystem-e1589",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Load Food Donations
+    async function loadFoodDonations() {
+      const querySnapshot = await getDocs(collection(db, "donations"));
+      const table = document.getElementById("donationsTable");
+      table.innerHTML = "";
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        table.innerHTML += `
+          <tr>
+            <td>${data.firstName || 'Anonymous'}</td>
+            <td>${data.category || 'N/A'}</td> <!-- Showing Category -->
+            <td>${data.quantity || 'N/A'}</td>
+            <td>${data.kitchenName || data.pickupLocation || 'N/A'}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // Load Fund Donations
+    async function loadFundDonations() {
+      const querySnapshot = await getDocs(collection(db, "funds"));
+      const table = document.getElementById("fundsTable");
+      table.innerHTML = "";
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        table.innerHTML += `
+          <tr>
+            <td>${data.donorName || 'Anonymous'}</td>
+            <td>₹${data.amount}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // Toggle Table Visibility with Animation
+    window.showTable = async function (tableId) {
+      const foodTable = document.getElementById("foodTable");
+      const fundTable = document.getElementById("fundTable");
+
+      foodTable.classList.remove("active");
+      fundTable.classList.remove("active");
+
+      if (tableId === "foodTable") {
+        await loadFoodDonations();
+      } else {
+        await loadFundDonations();
+      }
+
+      setTimeout(() => {
+        document.getElementById(tableId).classList.add("active");
+      }, 50);
+    };
+
+    // Show food table on initial load
+    showTable('foodTable');
+  </script>
+</body>
+</html>

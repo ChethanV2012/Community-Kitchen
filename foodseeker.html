@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Food Seeker Dashboard</title>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: white;
+      text-align: center;
+    }
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: #1e1e1e;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #444;
+      text-align: center;
+    }
+    th {
+      background: #ffc107;
+      color: black;
+    }
+    button {
+      padding: 5px 10px;
+      background-color: #ffc107;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    input {
+      width: 50px;
+      padding: 5px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Food Seeker Dashboard</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Available Quantity</th>
+        <th>Pickup Location</th>
+        <th>Request Quantity</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="availableFoodTable"></tbody>
+  </table>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBCD7a7qFfkNJLWWKpAXl4T3zSvDxkJF7s",
+      authDomain: "fooddonationsystem-e1589.firebaseapp.com",
+      projectId: "fooddonationsystem-e1589",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadAvailableFood() {
+      const querySnapshot = await getDocs(collection(db, "donations"));
+      const table = document.getElementById("availableFoodTable");
+      table.innerHTML = "";
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        table.innerHTML += `
+          <tr>
+            <td>${data.category || 'N/A'}</td>
+            <td id="quantity-${docSnap.id}">${data.quantity || 'N/A'}</td>
+            <td>${data.kitchenName || data.pickupLocation || 'N/A'}</td>
+            <td><input type="number" id="request-${docSnap.id}" min="1" max="${data.quantity || 1}" value="1"></td>
+            <td><button onclick="requestFood('${docSnap.id}', '${data.category}', '${data.kitchenName || data.pickupLocation}')">Request</button></td>
+          </tr>
+        `;
+      });
+    }
+
+    window.requestFood = async function (docId, category, location) {
+      const requestQuantity = parseInt(document.getElementById(`request-${docId}`).value);
+      const availableQuantityElement = document.getElementById(`quantity-${docId}`);
+      const availableQuantity = parseInt(availableQuantityElement.textContent);
+
+      if (requestQuantity > availableQuantity) {
+        alert("Requested quantity exceeds available quantity!");
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "requests"), {
+          category: category,
+          pickupLocation: location,
+          quantity: requestQuantity,
+          status: "Pending",
+          timestamp: new Date()
+        });
+        
+        await updateDoc(doc(db, "donations", docId), {
+          quantity: availableQuantity - requestQuantity
+        });
+        
+        availableQuantityElement.textContent = availableQuantity - requestQuantity;
+        alert("Food request submitted successfully!");
+      } catch (error) {
+        console.error("Error requesting food: ", error);
+      }
+    };
+
+    loadAvailableFood();
+  </script>
+</body>
+</html>
